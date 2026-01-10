@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Deploy') {
+            steps {
+                sshagent(credentials: ['deploy-ssh']) {
+                    sh '''
+                    ssh -p 2222 viktor@10.1.11.97 "
+                      cd /home/viktor/App_Docker_Compose/frontend/provedcode-frontend-vitya199909 &&
+                      git pull &&
+                      cd /home/viktor/App_Docker_Compose/backend/provedcode-backend-vitya199909 &&
+                      git pull &&
+                      cd /home/viktor/App_Docker_Compose &&
+                      docker compose down &&
+                      docker compose up -d --build
+                    "
+                    '''
+                }
+            }
+        }
+    }
+}

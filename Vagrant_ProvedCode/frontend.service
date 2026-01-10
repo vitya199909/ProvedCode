@@ -1,0 +1,16 @@
+[Unit]
+Description=React Frontend (npm start)
+After=network.target
+
+[Service]
+Type=simple
+User=vagrant
+WorkingDirectory=/home/vagrant/frontend
+ExecStart=/usr/bin/npm start
+Restart=always
+Environment=CI=false
+Environment=HOST=0.0.0.0
+Environment=REACT_APP_BASE_URL=http://localhost:8080
+
+[Install]
+WantedBy=multi-user.target

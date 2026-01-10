@@ -1,0 +1,25 @@
+[Unit]
+Description=Spring Boot Backend
+After=network.target
+
+[Service]
+Type=simple
+User=vagrant
+WorkingDirectory=/home/vagrant/backend
+ExecStart=/usr/bin/java -jar /home/vagrant/backend/target/demo-0.5.0-SNAPSHOT.jar
+Restart=always
+Environment=SPRING_PROFILES_ACTIVE=prod
+Environment=DB_LOGIN=myuser
+Environment=DB_PASSWORD=mypassword
+Environment=DB_URL=192.168.56.12:5432/mydb
+Environment=S3_ACCESS_KEY=test
+Environment=S3_SECRET_KEY=test
+Environment=S3_REGION=us-west-1
+Environment=BUCKET=my-bucket
+Environment=EMAIL_USER=""
+Environment=EMAIL_PASSWORD=""
+Environment=SPRING_PROFILES_ACTIVE=prod
+
+
+[Install]
+WantedBy=multi-user.target
