@@ -1,0 +1,12 @@
+[submodule "App_Docker_Compose/backend/provedcode-backend-vitya199909"]
+	path = App_Docker_Compose/backend/provedcode-backend-vitya199909
+	url = git@github.com:DevOps-ProjectLevel/provedcode-backend-vitya199909.git
+[submodule "App_Docker_Compose/frontend/provedcode-frontend-vitya199909"]
+	path = App_Docker_Compose/frontend/provedcode-frontend-vitya199909
+	url = git@github.com:DevOps-ProjectLevel/provedcode-frontend-vitya199909.git
+[submodule "Vagrant_ProvedCode/provedcode-backend-vitya199909"]
+	path = Vagrant_ProvedCode/provedcode-backend-vitya199909
+	url = git@github.com:DevOps-ProjectLevel/provedcode-backend-vitya199909.git
+[submodule "Vagrant_ProvedCode/provedcode-frontend-vitya199909"]
+	path = Vagrant_ProvedCode/provedcode-frontend-vitya199909
+	url = git@github.com:DevOps-ProjectLevel/provedcode-frontend-vitya199909.git
