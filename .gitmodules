@@ -14,3 +14,11 @@
 	path = Vagrant_ProvedCode/provedcode-frontend-vitya199909
 	url = git@github.com:DevOps-ProjectLevel/provedcode-frontend-vitya199909.git
 	branch = main
+[submodule "Vagrant_ProvedCode_Oracle/provedcode-backend-vitya199909"]
+	path = Vagrant_ProvedCode_Oracle/provedcode-backend-vitya199909
+	url = git@github.com:DevOps-ProjectLevel/provedcode-backend-vitya199909.git
+	branch = main
+[submodule "Vagrant_ProvedCode_Oracle/provedcode-frontend-vitya199909"]
+	path = Vagrant_ProvedCode_Oracle/provedcode-frontend-vitya199909
+	url = git@github.com:DevOps-ProjectLevel/provedcode-frontend-vitya199909.git
+	branch = main
