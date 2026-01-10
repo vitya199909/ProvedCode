@@ -6,7 +6,7 @@ pipeline {
             steps {
                 sshagent(credentials: ['deploy-ssh-gcp']) {
                     sh '''
-                    ssh vitya199909@http://34.53.12.23/ "
+                    ssh vitya199909@34.53.12.23"
                       cd /home/viktor/ProvedCode/App_Docker_Compose/frontend/provedcode-frontend-vitya199909 &&
                       git pull &&
                       cd /home/viktor/ProvedCode/App_Docker_Compose/backend/provedcode-backend-vitya199909 &&
