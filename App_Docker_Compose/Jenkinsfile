@@ -4,10 +4,14 @@ pipeline {
     stages {
         stage('Checkout Submodules') {
             steps {
-                sh '''
-                    git submodule sync --recursive
-                    git submodule update --init --recursive
-                '''
+                withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                    sh '''
+                        git config --global credential.helper store
+                        echo "https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com" > ~/.git-credentials
+                        git submodule sync --recursive
+                        git submodule update --init --recursive
+                    '''
+                }
             }
         }
 
