@@ -4,9 +4,9 @@ pipeline {
     stages {
         stage('Deploy') {
             steps {
-                sshagent(credentials: ['deploy-ssh-gcp']) {
+                sshagent(credentials: ['deploy-ssh']) {
                     sh '''
-                    ssh -o StrictHostKeyChecking=no viktor@10.1.11.97 "
+                    ssh -p 2222 -o StrictHostKeyChecking=no viktor@10.1.11.97"
                       cd /home/viktor/ProvedCode/App_Docker_Compose/frontend/provedcode-frontend-viktor &&
                       git pull &&
                       cd /home/viktor/ProvedCode/App_Docker_Compose/backend/provedcode-backend-viktor &&
