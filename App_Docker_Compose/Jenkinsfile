@@ -18,7 +18,7 @@ pipeline {
                     withSonarQubeEnv('SonarQube') {
                         sh '''
                         ssh -p 2222 -o StrictHostKeyChecking=no viktor@10.1.11.97 "
-                          cd /home/viktor/ProvedCode/App_Docker_Compose/backend/provedcode-backend-viktor &&
+                          cd /home/viktor/ProvedCode/App_Docker_Compose/backend/provedcode-backend-vitya199909 &&
                           git pull &&
                           mvn clean verify sonar:sonar \
                             -Dsonar.projectKey=provedcode-backend \
@@ -58,9 +58,9 @@ pipeline {
                 sshagent(credentials: ['deploy-ssh']) {
                     sh '''
                     ssh -p 2222 -o StrictHostKeyChecking=no viktor@10.1.11.97 "
-                      cd /home/viktor/ProvedCode/App_Docker_Compose/frontend/provedcode-frontend-viktor &&
+                      cd /home/viktor/ProvedCode/App_Docker_Compose/frontend/provedcode-frontend-vitya199909 &&
                       git pull &&
-                      cd /home/viktor/ProvedCode/App_Docker_Compose/backend/provedcode-backend-viktor &&
+                      cd /home/viktor/ProvedCode/App_Docker_Compose/backend/provedcode-backend-vitya199909 &&
                       git pull &&
                       cd /home/viktor/ProvedCode/App_Docker_Compose &&
                       docker compose down &&
