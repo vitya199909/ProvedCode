@@ -2,27 +2,9 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout Backend') {
-            steps {
-                dir('backend') {
-                    git branch: 'main',
-                        url: 'https://github.com/vitya199909/provedcode-backend-vitya199909.git'
-                }
-            }
-        }
-
-        stage('Checkout Frontend') {
-            steps {
-                dir('frontend') {
-                    git branch: 'main',
-                        url: 'https://github.com/vitya199909/provedcode-frontend-vitya199909.git'
-                }
-            }
-        }
-
         stage('Code Inspection - Backend') {
             steps {
-                dir('backend') {
+                dir('App_Docker_Compose/backend/provedcode-backend-vitya199909') {
                     withSonarQubeEnv('SonarQube') {
                         sh '''
                             mvn clean verify sonar:sonar \
@@ -36,7 +18,7 @@ pipeline {
 
         stage('Code Inspection - Frontend') {
             steps {
-                dir('frontend') {
+                dir('App_Docker_Compose/frontend/provedcode-frontend-vitya199909') {
                     sh '''
                         npm install
                         npm run lint || echo 'ESLint warnings found but continuing...'
