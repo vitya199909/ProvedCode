@@ -44,7 +44,7 @@ docker-compose up -d
 
 1. Відкрийте Grafana (http://localhost:9091)
 2. Імпортуйте готові дашборди:
-   - **Spring Boot Dashboard**: ID `6756`
+   - **Spring Boot Dashboard**: ID `12900`
    - **PostgreSQL Dashboard**: ID `9628`
    - **Node Exporter**: ID `1860` (якщо потрібен системний моніторинг)
 
