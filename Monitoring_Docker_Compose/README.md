@@ -31,6 +31,12 @@ docker-compose up -d
 - JVM метрики (пам'ять, garbage collection, потоки)
 - Метрики застосунку (custom metrics)
 
+### Nginx Frontend
+- HTTP запити (кількість, статус коди)
+- Active connections
+- Requests per second
+- Upstream backends статус
+
 ### PostgreSQL
 - З'єднання з БД
 - Кількість запитів
@@ -44,7 +50,8 @@ docker-compose up -d
 
 1. Відкрийте Grafana (http://localhost:9091)
 2. Імпортуйте готові дашборди:
-   - **Spring Boot Dashboard**: ID `12900`
+   - **Spring Boot Dashboard**: ID `12900` (Spring Boot 2.1+ Statistics)
    - **PostgreSQL Dashboard**: ID `9628`
+   - **Nginx Dashboard**: ID `12708` (NGINX Prometheus Exporter)
    - **Node Exporter**: ID `1860` (якщо потрібен системний моніторинг)
 

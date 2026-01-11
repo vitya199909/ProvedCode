@@ -21,6 +21,13 @@ scrape_configs:
         labels:
           application: 'postgres'
 
+  # Nginx frontend metrics
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx-exporter:9113']
+        labels:
+          application: 'nginx-frontend'
+
   # Prometheus self-monitoring
   - job_name: 'prometheus'
     static_configs:

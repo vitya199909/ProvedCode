@@ -40,6 +40,15 @@ services:
     networks:
       - app-net
 
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    container_name: nginx-exporter
+    restart: unless-stopped
+    command:
+      - '-nginx.scrape-uri=http://frontend/metrics'
+    networks:
+      - app-net
+
 volumes:
   prometheus-data:
   grafana-data:
