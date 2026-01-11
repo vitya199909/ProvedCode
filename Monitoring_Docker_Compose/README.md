@@ -18,7 +18,7 @@ docker-compose up -d
 
 ## Доступ до сервісів
 
-- **Grafana**: http://localhost:3000
+- **Grafana**: http://localhost:9091
   - Логін: `admin`
   - Пароль: `admin`
 
@@ -42,7 +42,7 @@ docker-compose up -d
 
 ## Налаштування дашбордів Grafana
 
-1. Відкрийте Grafana (http://localhost:3000)
+1. Відкрийте Grafana (http://localhost:9091)
 2. Імпортуйте готові дашборди:
    - **Spring Boot Dashboard**: ID `6756`
    - **PostgreSQL Dashboard**: ID `9628`
