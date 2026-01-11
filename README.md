@@ -685,7 +685,7 @@ REACT_APP_BASE_URL=http://localhost
 ## 📞 Контакти
 
 - GitHub: [@vitya199909](https://github.com/vitya199909)
-- Email: viktor.nedilskyi@example.com
+- Email: vitya199909@gmail.com
 
 ---
 
