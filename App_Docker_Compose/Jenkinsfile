@@ -83,13 +83,19 @@ pipeline {
                     echo "📦 Building version: ${version}"
                     
                     sh """
-                        cd App_Docker_Compose
-                        docker compose build
+                        # Build backend
+                        cd App_Docker_Compose/backend
+                        docker build -t myapp-backend:latest .
                         docker tag myapp-backend:latest nexus:8083/myapp-backend:${version}
                         docker tag myapp-backend:latest nexus:8083/myapp-backend:latest
+                        
+                        # Build frontend
+                        cd ../frontend
+                        docker build --build-arg REACT_APP_BASE_URL=http://10.1.11.97:8080 -t myapp-frontend:latest .
                         docker tag myapp-frontend:latest nexus:8083/myapp-frontend:${version}
                         docker tag myapp-frontend:latest nexus:8083/myapp-frontend:latest
                         
+                        # Login and push to Nexus
                         echo 'admin123' | docker login nexus:8083 -u admin --password-stdin
                         docker push nexus:8083/myapp-backend:${version}
                         docker push nexus:8083/myapp-backend:latest
