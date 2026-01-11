@@ -48,7 +48,7 @@
 └─────────────────────┬───────────────────────────────────────┘
                       │
          ┌────────────▼────────────┐
-         │    NGINX (Port 8080)    │  ◄── Reverse Proxy
+         │    NGINX (Port 80)      │  ◄── Reverse Proxy
          └────────────┬────────────┘
                       │
         ┌─────────────┴─────────────┐
@@ -122,7 +122,7 @@ cd App_Docker_Compose
 docker compose up -d
 ```
 
-**Доступ:** http://localhost:8080
+**Доступ:** http://localhost
 
 ---
 
@@ -546,7 +546,7 @@ kubectl get services -n provedcode
 cd Vagrant_ProvedCode
 vagrant up
 vagrant ssh
-# Додаток працює на http://192.168.56.10:8080
+# Додаток працює на http://192.168.56.10
 ```
 
 ---
@@ -626,14 +626,14 @@ EMAIL_PASSWORD=your-app-password
 
 **Frontend:**
 ```env
-REACT_APP_BASE_URL=http://localhost:8080
+REACT_APP_BASE_URL=http://localhost
 ```
 
 ### Ports
 
 | Service       | Port  | Description              |
 |---------------|-------|--------------------------|
-| Application   | 8080  | Main app (Nginx)         |
+| Application   | 80    | Main app (Nginx)         |
 | Jenkins       | 8081  | CI/CD                    |
 | Nexus UI      | 8082  | Artifact Management      |
 | Nexus Docker  | 8083  | Docker Registry          |
