@@ -2,6 +2,12 @@ pipeline {
     agent any
 
     stages {
+        stage('Checkout Submodules') {
+            steps {
+                sh 'git submodule update --init --recursive'
+            }
+        }
+
         stage('Code Inspection - Backend') {
             steps {
                 dir('App_Docker_Compose/backend/provedcode-backend-vitya199909') {
