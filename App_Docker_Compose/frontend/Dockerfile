@@ -8,7 +8,7 @@ COPY provedcode-frontend-vitya199909/ .
 ARG REACT_APP_BASE_URL
 ENV REACT_APP_BASE_URL=$REACT_APP_BASE_URL
 
-ENV CI=false
+ENV DISABLE_ESLINT_PLUGIN=true
 RUN npm run build
 
 # ---------- runtime stage ----------
