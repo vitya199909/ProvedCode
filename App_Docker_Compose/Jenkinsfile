@@ -1,16 +1,62 @@
 pipeline {
     agent any
 
+    environment {
+        SONAR_HOST_URL = 'http://10.1.11.97:9000'
+    }
+
     stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out code from repositories...'
+            }
+        }
+
+        stage('Code Inspection - Backend') {
+            steps {
+                sshagent(credentials: ['deploy-ssh']) {
+                    withSonarQubeEnv('SonarQube') {
+                        sh '''
+                        ssh -p 2222 -o StrictHostKeyChecking=no viktor@10.1.11.97 "
+                          cd /home/viktor/ProvedCode/App_Docker_Compose/backend/provedcode-backend-vitya199909 &&
+                          git pull &&
+                          mvn clean verify sonar:sonar -Dsonar.projectKey=provedcode-backend -Dsonar.projectName='ProvedCode Backend' -Dsonar.host.url=${SONAR_HOST_URL}
+                        "
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Code Inspection - Frontend') {
+            steps {
+                sshagent(credentials: ['deploy-ssh']) {
+                    withSonarQubeEnv('SonarQube') {
+                        sh '''
+                        ssh -p 2222 -o StrictHostKeyChecking=no viktor@10.1.11.97 "
+                          cd /home/viktor/ProvedCode/App_Docker_Compose/frontend/provedcode-frontend-vitya199909 &&
+                          git pull &&
+                          npm run lint || true
+                        "
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
         stage('Deploy') {
             steps {
                 sshagent(credentials: ['deploy-ssh']) {
                     sh '''
                     ssh -p 2222 -o StrictHostKeyChecking=no viktor@10.1.11.97 "
-                      cd /home/viktor/ProvedCode/App_Docker_Compose/frontend/provedcode-frontend-vitya199909 &&
-                      git pull &&
-                      cd /home/viktor/ProvedCode/App_Docker_Compose/backend/provedcode-backend-vitya199909 &&
-                      git pull &&
                       cd /home/viktor/ProvedCode/App_Docker_Compose &&
                       docker compose down &&
                       docker compose build --no-cache &&
@@ -21,4 +67,14 @@ pipeline {
             }
         }
     }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully! ✅'
+        }
+        failure {
+            echo 'Pipeline failed! ❌ Check logs for details.'
+        }
+    }
 }
+

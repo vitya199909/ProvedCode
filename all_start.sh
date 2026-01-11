@@ -10,3 +10,7 @@ cd Monitoring_Docker_Compose
 docker compose build --no-cache
 docker compose up -d
 cd ..
+cd CCI_Docker_Compose
+docker compose build --no-cache
+docker compose up -d
+cd ..
