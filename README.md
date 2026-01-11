@@ -671,17 +671,6 @@ REACT_APP_BASE_URL=http://localhost
 
 ---
 
-## 🙏 Подяки
-
-- Spring Boot Team
-- React Community
-- SonarSource
-- Sonatype Nexus
-- Jenkins Community
-- Prometheus & Grafana
-
----
-
 ## 📞 Контакти
 
 - GitHub: [@vitya199909](https://github.com/vitya199909)
