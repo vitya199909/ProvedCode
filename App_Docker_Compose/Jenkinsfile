@@ -33,10 +33,16 @@ pipeline {
         stage('Code Inspection - Frontend') {
             steps {
                 dir('App_Docker_Compose/frontend/provedcode-frontend-vitya199909') {
-                    sh '''
-                        npm install
-                        npm run lint || echo 'ESLint warnings found but continuing...'
-                    '''
+                    withSonarQubeEnv('SonarQube') {
+                        sh '''
+                            npm install
+                            npm run lint || echo 'ESLint warnings found but continuing...'
+                            npx sonar-scanner \
+                              -Dsonar.host.url=http://sonarqube:9000 \
+                              -Dsonar.projectKey=provedcode-frontend \
+                              -Dsonar.projectName='ProvedCode Frontend'
+                        '''
+                    }
                 }
             }
         }
