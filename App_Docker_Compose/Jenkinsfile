@@ -1,30 +1,33 @@
 pipeline {
     agent any
 
-    environment {
-        SONAR_HOST_URL = 'http://10.0.2.15:9000'
-    }
-
     stages {
-        stage('Checkout') {
+        stage('Checkout Backend') {
             steps {
-                echo 'Code will be pulled on deployment server...'
+                dir('backend') {
+                    git branch: 'main',
+                        url: 'https://github.com/vitya199909/provedcode-backend-vitya199909.git'
+                }
+            }
+        }
+
+        stage('Checkout Frontend') {
+            steps {
+                dir('frontend') {
+                    git branch: 'main',
+                        url: 'https://github.com/vitya199909/provedcode-frontend-vitya199909.git'
+                }
             }
         }
 
         stage('Code Inspection - Backend') {
             steps {
-                sshagent(credentials: ['deploy-ssh']) {
+                dir('backend') {
                     withSonarQubeEnv('SonarQube') {
                         sh '''
-                        ssh -p 2222 -o StrictHostKeyChecking=no viktor@10.1.11.97 "
-                          cd /home/viktor/ProvedCode/App_Docker_Compose/backend/provedcode-backend-vitya199909 &&
-                          git pull &&
-                          mvn clean verify sonar:sonar \
-                            -Dsonar.projectKey=provedcode-backend \
-                            -Dsonar.projectName='ProvedCode Backend' \
-                            -Dsonar.host.url=${SONAR_HOST_URL}
-                        "
+                            mvn clean verify sonar:sonar \
+                              -Dsonar.projectKey=provedcode-backend \
+                              -Dsonar.projectName='ProvedCode Backend'
                         '''
                     }
                 }
@@ -33,13 +36,10 @@ pipeline {
 
         stage('Code Inspection - Frontend') {
             steps {
-                sshagent(credentials: ['deploy-ssh']) {
+                dir('frontend') {
                     sh '''
-                    ssh -p 2222 -o StrictHostKeyChecking=no viktor@10.1.11.97 "
-                      cd /home/viktor/ProvedCode/App_Docker_Compose/frontend/provedcode-frontend-viktor &&
-                      git pull &&
-                      npm run lint || echo 'ESLint warnings found but continuing...'
-                    "
+                        npm install
+                        npm run lint || echo 'ESLint warnings found but continuing...'
                     '''
                 }
             }
