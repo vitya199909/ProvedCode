@@ -4,7 +4,10 @@ pipeline {
     stages {
         stage('Checkout Submodules') {
             steps {
-                sh 'git submodule update --init --recursive'
+                sh '''
+                    git submodule sync --recursive
+                    git submodule update --init --recursive
+                '''
             }
         }
 
