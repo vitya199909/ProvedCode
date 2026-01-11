@@ -14,3 +14,7 @@ cd CCI_Docker_Compose
 docker compose build --no-cache
 docker compose up -d
 cd ..
+cd Nexus_Docker_Compose
+docker compose build --no-cache
+docker compose up -d
+cd ..
