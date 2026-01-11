@@ -1,0 +1,144 @@
+{
+  "dashboard": {
+    "title": "ProvedCode Logs",
+    "tags": ["logs", "loki"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "title": "Backend Logs (All Instances)",
+        "type": "logs",
+        "datasource": "Loki",
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0},
+        "targets": [
+          {
+            "expr": "{compose_service=~\"backend.*\"}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "showTime": true,
+          "showLabels": true,
+          "sortOrder": "Descending",
+          "wrapLogMessage": false,
+          "enableLogDetails": true
+        }
+      },
+      {
+        "title": "Backend Errors",
+        "type": "logs",
+        "datasource": "Loki",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+        "targets": [
+          {
+            "expr": "{compose_service=~\"backend.*\"} |~ \"ERROR|Exception|exception\"",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "showTime": true,
+          "showLabels": true,
+          "sortOrder": "Descending",
+          "dedupStrategy": "none"
+        }
+      },
+      {
+        "title": "Nginx Access Logs",
+        "type": "logs",
+        "datasource": "Loki",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+        "targets": [
+          {
+            "expr": "{compose_service=\"frontend\"}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "showTime": true,
+          "showLabels": false,
+          "sortOrder": "Descending"
+        }
+      },
+      {
+        "title": "PostgreSQL Logs",
+        "type": "logs",
+        "datasource": "Loki",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+        "targets": [
+          {
+            "expr": "{compose_service=\"db\"}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "showTime": true,
+          "showLabels": false,
+          "sortOrder": "Descending"
+        }
+      },
+      {
+        "title": "Log Volume by Service",
+        "type": "bargauge",
+        "datasource": "Loki",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+        "targets": [
+          {
+            "expr": "sum by (compose_service) (count_over_time({compose_service=~\".+\"}[5m]))",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "orientation": "horizontal",
+          "displayMode": "gradient"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "color": {
+              "mode": "palette-classic"
+            }
+          }
+        }
+      },
+      {
+        "title": "System Logs (Syslog)",
+        "type": "logs",
+        "datasource": "Loki",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
+        "targets": [
+          {
+            "expr": "{job=\"syslog\"}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "showTime": true,
+          "showLabels": false,
+          "sortOrder": "Descending"
+        }
+      },
+      {
+        "title": "Authentication Logs",
+        "type": "logs",
+        "datasource": "Loki",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24},
+        "targets": [
+          {
+            "expr": "{job=\"auth\"}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "showTime": true,
+          "showLabels": false,
+          "sortOrder": "Descending"
+        }
+      }
+    ],
+    "refresh": "10s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    }
+  },
+  "overwrite": true
+}

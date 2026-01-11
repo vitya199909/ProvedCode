@@ -28,6 +28,13 @@ scrape_configs:
         labels:
           application: 'nginx-frontend'
 
+  # Node Exporter - system metrics
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          instance: 'provedcode-server'
+
   # Prometheus self-monitoring
   - job_name: 'prometheus'
     static_configs:
