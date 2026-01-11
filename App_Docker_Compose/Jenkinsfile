@@ -8,29 +8,23 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo 'Checking out code from repositories...'
-                dir('backend') {
-                    git branch: 'main',
-                        credentialsId: 'github-credentials',
-                        url: 'https://github.com/vitya199909/provedcode-backend-vitya199909.git'
-                }
-                dir('frontend') {
-                    git branch: 'main',
-                        credentialsId: 'github-credentials',
-                        url: 'https://github.com/vitya199909/provedcode-frontend-vitya199909.git'
-                }
+                echo 'Code will be pulled on deployment server...'
             }
         }
 
         stage('Code Inspection - Backend') {
             steps {
-                dir('backend') {
+                sshagent(credentials: ['deploy-ssh']) {
                     withSonarQubeEnv('SonarQube') {
                         sh '''
-                            mvn clean verify sonar:sonar \
-                              -Dsonar.projectKey=provedcode-backend \
-                              -Dsonar.projectName='ProvedCode Backend' \
-                              -Dsonar.host.url=${SONAR_HOST_URL}
+                        ssh -p 2222 -o StrictHostKeyChecking=no viktor@10.1.11.97 "
+                          cd /home/viktor/ProvedCode/App_Docker_Compose/backend/provedcode-backend-viktor &&
+                          git pull &&
+                          mvn clean verify sonar:sonar \
+                            -Dsonar.projectKey=provedcode-backend \
+                            -Dsonar.projectName='ProvedCode Backend' \
+                            -Dsonar.host.url=${SONAR_HOST_URL}
+                        "
                         '''
                     }
                 }
@@ -39,10 +33,13 @@ pipeline {
 
         stage('Code Inspection - Frontend') {
             steps {
-                dir('frontend') {
+                sshagent(credentials: ['deploy-ssh']) {
                     sh '''
-                        npm install
-                        npm run lint || true
+                    ssh -p 2222 -o StrictHostKeyChecking=no viktor@10.1.11.97 "
+                      cd /home/viktor/ProvedCode/App_Docker_Compose/frontend/provedcode-frontend-viktor &&
+                      git pull &&
+                      npm run lint || echo 'ESLint warnings found but continuing...'
+                    "
                     '''
                 }
             }
@@ -61,14 +58,13 @@ pipeline {
                 sshagent(credentials: ['deploy-ssh']) {
                     sh '''
                     ssh -p 2222 -o StrictHostKeyChecking=no viktor@10.1.11.97 "
-                      cd /home/viktor/ProvedCode/App_Docker_Compose/frontend/provedcode-frontend-vitya199909 &&
+                      cd /home/viktor/ProvedCode/App_Docker_Compose/frontend/provedcode-frontend-viktor &&
                       git pull &&
-                      cd /home/viktor/ProvedCode/App_Docker_Compose/backend/provedcode-backend-vitya199909 &&
+                      cd /home/viktor/ProvedCode/App_Docker_Compose/backend/provedcode-backend-viktor &&
                       git pull &&
                       cd /home/viktor/ProvedCode/App_Docker_Compose &&
                       docker compose down &&
-                      docker compose build --no-cache &&
-                      docker compose up -d
+                      docker compose up -d --build
                     "
                     '''
                 }
@@ -85,4 +81,3 @@ pipeline {
         }
     }
 }
-
