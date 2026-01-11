@@ -64,6 +64,42 @@ pipeline {
             }
         }
 
+        stage('Build & Publish Artifacts') {
+            steps {
+                script {
+                    // Maven artifact
+                    dir('App_Docker_Compose/backend/provedcode-backend-vitya199909') {
+                        sh '''
+                            mvn deploy -DskipTests -s /var/jenkins_home/maven-settings.xml
+                        '''
+                    }
+                    
+                    // Docker images
+                    def version = sh(
+                        script: "cd App_Docker_Compose/backend/provedcode-backend-vitya199909 && mvn help:evaluate -Dexpression=project.version -q -DforceStdout",
+                        returnStdout: true
+                    ).trim()
+                    
+                    echo "📦 Building version: ${version}"
+                    
+                    sh """
+                        cd App_Docker_Compose
+                        docker compose build
+                        docker tag myapp-backend:latest nexus:8083/myapp-backend:${version}
+                        docker tag myapp-backend:latest nexus:8083/myapp-backend:latest
+                        docker tag myapp-frontend:latest nexus:8083/myapp-frontend:${version}
+                        docker tag myapp-frontend:latest nexus:8083/myapp-frontend:latest
+                        
+                        echo 'admin123' | docker login nexus:8083 -u admin --password-stdin
+                        docker push nexus:8083/myapp-backend:${version}
+                        docker push nexus:8083/myapp-backend:latest
+                        docker push nexus:8083/myapp-frontend:${version}
+                        docker push nexus:8083/myapp-frontend:latest
+                    """
+                }
+            }
+        }
+
         stage('Deploy') {
             steps {
                 sshagent(credentials: ['deploy-ssh']) {
