@@ -114,6 +114,13 @@ jobs:
           name: frontend-build
           path: ./artifacts/frontend
       
+      - name: Debug - List downloaded artifacts
+        run: |
+          echo "=== Backend artifacts ==="
+          ls -la ./artifacts/backend/
+          echo "=== Frontend artifacts ==="
+          ls -la ./artifacts/frontend/
+      
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
@@ -155,7 +162,8 @@ jobs:
       - name: Deploy Backend
         working-directory: Ansible
         run: |
-          ARTIFACT_PATH="${GITHUB_WORKSPACE}/artifacts/backend/provedcode-backend-vitya199909-0.0.1-SNAPSHOT.jar"
+          ARTIFACT_PATH=$(ls ${GITHUB_WORKSPACE}/artifacts/backend/*.jar | head -1)
+          echo "Using artifact: $ARTIFACT_PATH"
           ansible-playbook playbooks/deploy-backend.yml \
             -e "backend_deploy_dir=/opt/provedcode/backend" \
             -e "backend_port=8080" \
@@ -169,7 +177,8 @@ jobs:
       - name: Deploy Frontend
         working-directory: Ansible
         run: |
-          ARTIFACT_PATH="${GITHUB_WORKSPACE}/artifacts/frontend/frontend-build.tar.gz"
+          ARTIFACT_PATH=$(ls ${GITHUB_WORKSPACE}/artifacts/frontend/*.tar.gz | head -1)
+          echo "Using artifact: $ARTIFACT_PATH"
           ansible-playbook playbooks/deploy-frontend.yml \
             -e "frontend_deploy_dir=/var/www/html" \
             -e "backend_internal_ip=${{ env.BACKEND_INTERNAL_IP }}" \
