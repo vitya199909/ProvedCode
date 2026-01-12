@@ -726,4 +726,4 @@ REACT_APP_BASE_URL=http://localhost
 - **Disk:** 50 GB SSD
 - **OS:** Ubuntu 22.04 LTS
 
-Pipeline час виконання: ~5-7 хвилин (повний цикл)
+Pipeline час виконання: ~5-7 хвилин (повний цикл)# CI/CD Pipeline Active
