@@ -59,10 +59,9 @@ jobs:
       - name: Export environment variables
         run: |
           BACKEND_INTERNAL_IP=$(gcloud compute instances describe provedcode-backend --zone=europe-west1-b --format='get(networkInterfaces[0].networkIP)')
-          DB_IP=$(gcloud sql instances describe provedcode-db-production --format='get(ipAddresses[0].ipAddress)')
           
           echo "BACKEND_INTERNAL_IP=$BACKEND_INTERNAL_IP" >> $GITHUB_ENV
-          echo "DB_HOST=$DB_IP" >> $GITHUB_ENV
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> $GITHUB_ENV
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> $GITHUB_ENV
           echo "DB_USER=${{ secrets.DB_USER }}" >> $GITHUB_ENV
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
