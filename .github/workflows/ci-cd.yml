@@ -157,14 +157,26 @@ jobs:
         env:
           ARTIFACT_PATH: ../artifacts/backend/provedcode-backend-vitya199909-0.0.1-SNAPSHOT.jar
         run: |
-          ansible-playbook playbooks/deploy-backend.yml
+          ansible-playbook playbooks/deploy-backend.yml \
+            -e "backend_deploy_dir=/opt/provedcode/backend" \
+            -e "backend_port=8080" \
+            -e "db_host=${{ secrets.DB_HOST }}" \
+            -e "db_port=5432" \
+            -e "db_name=${{ secrets.DB_NAME }}" \
+            -e "db_user=${{ secrets.DB_USER }}" \
+            -e "db_password=${{ secrets.DB_PASSWORD }}" \
+            -e "artifact_path=$ARTIFACT_PATH"
       
       - name: Deploy Frontend
         working-directory: Ansible
         env:
           ARTIFACT_PATH: ../artifacts/frontend/frontend-build.tar.gz
         run: |
-          ansible-playbook playbooks/deploy-frontend.yml
+          ansible-playbook playbooks/deploy-frontend.yml \
+            -e "frontend_deploy_dir=/var/www/html" \
+            -e "backend_internal_ip=${{ env.BACKEND_INTERNAL_IP }}" \
+            -e "backend_port=8080" \
+            -e "artifact_path=$ARTIFACT_PATH"
       
       - name: Verify Deployment
         run: |

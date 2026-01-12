@@ -44,9 +44,9 @@
       
     - name: Copy artifact from local (alternative)
       copy:
-        src: "{{ lookup('env', 'ARTIFACT_PATH') }}"
+        src: "{{ artifact_path }}"
         dest: /tmp/frontend.tar.gz
-      when: lookup('env', 'ARTIFACT_PATH') | length > 0
+      when: artifact_path is defined and artifact_path | length > 0
     
     - name: Extract frontend build
       unarchive:

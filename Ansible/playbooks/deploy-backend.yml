@@ -4,7 +4,10 @@
   become: yes
   
   vars:
-    artifact_file: "provedcode-backend-{{ backend_version }}.jar"
+    artifact_file: "provedcode-backend-{{ backend_version | default('latest') }}.jar"
+    app_name: provedcode
+    app_port: "{{ backend_port | default(8080) }}"
+    db_port: "{{ db_port | default(5432) }}"
     
   tasks:
     - name: Wait for SSH connection
@@ -40,12 +43,12 @@
       
     - name: Copy artifact from local (alternative)
       copy:
-        src: "{{ lookup('env', 'ARTIFACT_PATH') }}"
+        src: "{{ artifact_path }}"
         dest: "{{ backend_deploy_dir }}/application.jar"
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: '0644'
-      when: lookup('env', 'ARTIFACT_PATH') | length > 0
+      when: artifact_path is defined and artifact_path | length > 0
     
     - name: Create application.properties
       template:
