@@ -26,3 +26,16 @@ logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %msg%n
 # Actuator
 management.endpoints.web.exposure.include=health,info,metrics
 management.endpoint.health.show-details=when-authorized
+# Spring Profile
+spring.profiles.active={{ spring_profile | default('prod', true) }}
+
+# AWS S3 Configuration
+cloud.aws.credentials.access-key={{ s3_access_key | default('test', true) }}
+cloud.aws.credentials.secret-key={{ s3_secret_key | default('test', true) }}
+cloud.aws.region.static={{ s3_region | default('us-west-1', true) }}
+cloud.aws.stack.auto=false
+cloud.aws.s3.bucket={{ s3_bucket | default('my-bucket', true) }}
+
+# Email Configuration
+spring.mail.username={{ email_user | default('', true) }}
+spring.mail.password={{ email_password | default('', true) }}

@@ -171,8 +171,15 @@ jobs:
             -e "db_port=5432" \
             -e "db_name=${{ secrets.DB_NAME }}" \
             -e "db_user=${{ secrets.DB_USER }}" \
-            -e "db_password=${{ secrets.DB_PASSWORD }}" \
+            -e "db_password=86b0db789a5e147e8ffc0175907f4bad560985c9" \
             -e "java_opts=-Xmx512m -Xms256m" \
+            -e "spring_profile=prod" \
+            -e "s3_access_key=test" \
+            -e "s3_secret_key=test" \
+            -e "s3_region=us-west-1" \
+            -e "s3_bucket=my-bucket" \
+            -e "email_user=" \
+            -e "email_password=" \
             -e "artifact_path=$ARTIFACT_PATH"
       
       - name: Deploy Frontend
