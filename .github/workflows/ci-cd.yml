@@ -172,6 +172,7 @@ jobs:
             -e "db_name=${{ secrets.DB_NAME }}" \
             -e "db_user=${{ secrets.DB_USER }}" \
             -e "db_password=${{ secrets.DB_PASSWORD }}" \
+            -e "java_opts=-Xmx512m -Xms256m" \
             -e "artifact_path=$ARTIFACT_PATH"
       
       - name: Deploy Frontend
