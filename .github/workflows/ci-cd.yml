@@ -154,9 +154,8 @@ jobs:
       
       - name: Deploy Backend
         working-directory: Ansible
-        env:
-          ARTIFACT_PATH: ../artifacts/backend/provedcode-backend-vitya199909-0.0.1-SNAPSHOT.jar
         run: |
+          ARTIFACT_PATH="${GITHUB_WORKSPACE}/artifacts/backend/provedcode-backend-vitya199909-0.0.1-SNAPSHOT.jar"
           ansible-playbook playbooks/deploy-backend.yml \
             -e "backend_deploy_dir=/opt/provedcode/backend" \
             -e "backend_port=8080" \
@@ -169,9 +168,8 @@ jobs:
       
       - name: Deploy Frontend
         working-directory: Ansible
-        env:
-          ARTIFACT_PATH: ../artifacts/frontend/frontend-build.tar.gz
         run: |
+          ARTIFACT_PATH="${GITHUB_WORKSPACE}/artifacts/frontend/frontend-build.tar.gz"
           ansible-playbook playbooks/deploy-frontend.yml \
             -e "frontend_deploy_dir=/var/www/html" \
             -e "backend_internal_ip=${{ env.BACKEND_INTERNAL_IP }}" \
