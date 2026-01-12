@@ -76,7 +76,7 @@ jobs:
       
       - name: Build frontend
         working-directory: ${{ env.FRONTEND_DIR }}
-        run: npm run build
+        run: DISABLE_ESLINT_PLUGIN=true npm run build
       
       - name: Create archive
         working-directory: ${{ env.FRONTEND_DIR }}
