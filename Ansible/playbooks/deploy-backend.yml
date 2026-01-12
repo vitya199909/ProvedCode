@@ -72,11 +72,33 @@
         enabled: yes
         daemon_reload: yes
     
+    - name: Wait a moment for service to start
+      pause:
+        seconds: 10
+    
+    - name: Check service status
+      command: systemctl status provedcode-backend
+      register: service_status
+      ignore_errors: yes
+    
+    - name: Show service status
+      debug:
+        var: service_status.stdout_lines
+    
+    - name: Check backend logs
+      command: journalctl -u provedcode-backend -n 50 --no-pager
+      register: backend_logs
+      ignore_errors: yes
+    
+    - name: Show backend logs
+      debug:
+        var: backend_logs.stdout_lines
+    
     - name: Wait for backend to be ready
       wait_for:
         port: "{{ app_port }}"
         delay: 5
-        timeout: 60
+        timeout: 120
         
     - name: Check backend health
       uri:
