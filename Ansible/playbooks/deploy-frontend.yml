@@ -7,6 +7,16 @@
     artifact_file: "provedcode-frontend-{{ frontend_version }}.tar.gz"
     
   tasks:
+    - name: Wait for SSH connection
+      wait_for_connection:
+        connect_timeout: 30
+        sleep: 5
+        delay: 5
+        timeout: 300
+    
+    - name: Gather facts
+      setup:
+    
     - name: Stop nginx
       systemd:
         name: nginx

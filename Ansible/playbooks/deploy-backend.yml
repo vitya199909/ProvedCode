@@ -7,6 +7,16 @@
     artifact_file: "provedcode-backend-{{ backend_version }}.jar"
     
   tasks:
+    - name: Wait for SSH connection
+      wait_for_connection:
+        connect_timeout: 30
+        sleep: 5
+        delay: 5
+        timeout: 300
+    
+    - name: Gather facts
+      setup:
+    
     - name: Ensure deploy directory exists
       file:
         path: "{{ backend_deploy_dir }}"
