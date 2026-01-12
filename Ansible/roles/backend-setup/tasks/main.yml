@@ -1,0 +1,22 @@
+---
+- name: Create backend deploy directory
+  file:
+    path: "{{ backend_deploy_dir }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Create logs directory
+  file:
+    path: "{{ backend_deploy_dir }}/logs"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Allow backend port in firewall
+  ufw:
+    rule: allow
+    port: '{{ app_port }}'
+    proto: tcp

@@ -1,0 +1,19 @@
+# Ansible
+*.retry
+.ansible/
+/tmp/
+
+# Logs
+*.log
+
+# Environment files
+.env
+
+# Vault password files
+.vault_pass
+vault_pass.txt
+
+# Temporary files
+*.tmp
+*.swp
+*~

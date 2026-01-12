@@ -1,0 +1,22 @@
+---
+- name: Setup Backend Server
+  hosts: backend
+  become: yes
+  vars:
+    backend_deploy_dir: /opt/provedcode/backend
+  roles:
+    - common
+    - java
+    - backend-setup
+
+- name: Setup Frontend Server
+  hosts: frontend
+  become: yes
+  vars:
+    frontend_deploy_dir: /var/www/html
+    nginx_worker_processes: auto
+    nginx_worker_connections: 1024
+  roles:
+    - common
+    - nginx
+    - frontend-setup

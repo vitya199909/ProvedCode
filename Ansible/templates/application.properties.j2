@@ -1,0 +1,28 @@
+# Spring Boot Configuration
+spring.application.name={{ app_name }}
+
+# Server Configuration
+server.port={{ app_port }}
+server.servlet.context-path=/
+
+# Database Configuration
+spring.datasource.url=jdbc:postgresql://{{ db_host }}:{{ db_port }}/{{ db_name }}
+spring.datasource.username={{ db_user }}
+spring.datasource.password={{ db_password }}
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# JPA Configuration
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.properties.hibernate.format_sql=true
+
+# Logging
+logging.level.root=INFO
+logging.level.com.provedcode={{ lookup('env', 'LOG_LEVEL') | default('INFO', true) }}
+logging.file.name={{ backend_deploy_dir }}/application.log
+logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %msg%n
+
+# Actuator
+management.endpoints.web.exposure.include=health,info,metrics
+management.endpoint.health.show-details=when-authorized

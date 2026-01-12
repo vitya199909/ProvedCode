@@ -1,0 +1,80 @@
+name: Setup Infrastructure
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup-servers:
+    name: Setup GCP Servers
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          export_default_credentials: true
+      
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          
+          # Add SSH keys to VMs
+          gcloud compute instances add-metadata provedcode-backend \
+            --zone=europe-west1-b \
+            --metadata "ssh-keys=viktor:$SSH_PUBLIC_KEY"
+          
+          gcloud compute instances add-metadata provedcode-frontend \
+            --zone=europe-west1-b \
+            --metadata "ssh-keys=viktor:$SSH_PUBLIC_KEY"
+          
+          # Get IPs and add to known_hosts
+          BACKEND_IP=$(gcloud compute instances describe provedcode-backend --zone=europe-west1-b --format='get(networkInterfaces[0].accessConfigs[0].natIP)')
+          FRONTEND_IP=$(gcloud compute instances describe provedcode-frontend --zone=europe-west1-b --format='get(networkInterfaces[0].accessConfigs[0].natIP)')
+          
+          ssh-keyscan -H $BACKEND_IP >> ~/.ssh/known_hosts
+          ssh-keyscan -H $FRONTEND_IP >> ~/.ssh/known_hosts
+          
+          echo "BACKEND_IP=$BACKEND_IP" >> $GITHUB_ENV
+          echo "FRONTEND_IP=$FRONTEND_IP" >> $GITHUB_ENV
+      
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+      
+      - name: Export environment variables
+        run: |
+          BACKEND_INTERNAL_IP=$(gcloud compute instances describe provedcode-backend --zone=europe-west1-b --format='get(networkInterfaces[0].networkIP)')
+          DB_IP=$(gcloud sql instances describe provedcode-db-production --format='get(ipAddresses[0].ipAddress)')
+          
+          echo "BACKEND_INTERNAL_IP=$BACKEND_INTERNAL_IP" >> $GITHUB_ENV
+          echo "DB_HOST=$DB_IP" >> $GITHUB_ENV
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> $GITHUB_ENV
+          echo "DB_USER=${{ secrets.DB_USER }}" >> $GITHUB_ENV
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
+      
+      - name: Test Ansible connectivity
+        working-directory: Ansible
+        run: ansible all -m ping
+      
+      - name: Run server setup
+        working-directory: Ansible
+        run: ansible-playbook playbooks/setup-all.yml
+      
+      - name: Summary
+        run: |
+          echo "## ✅ Infrastructure Setup Complete" >> $GITHUB_STEP_SUMMARY
+          echo "### Server IPs" >> $GITHUB_STEP_SUMMARY
+          echo "- Backend: ${{ env.BACKEND_IP }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend: ${{ env.FRONTEND_IP }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Database: ${{ env.DB_HOST }}" >> $GITHUB_STEP_SUMMARY

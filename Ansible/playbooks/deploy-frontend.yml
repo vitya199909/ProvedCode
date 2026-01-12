@@ -1,0 +1,92 @@
+---
+- name: Deploy Frontend Application
+  hosts: frontend
+  become: yes
+  
+  vars:
+    artifact_file: "provedcode-frontend-{{ frontend_version }}.tar.gz"
+    
+  tasks:
+    - name: Stop nginx
+      systemd:
+        name: nginx
+        state: stopped
+    
+    - name: Clean old frontend files
+      file:
+        path: "{{ frontend_deploy_dir }}"
+        state: absent
+        
+    - name: Create frontend directory
+      file:
+        path: "{{ frontend_deploy_dir }}"
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+    
+    - name: Download artifact from Artifactory
+      get_url:
+        url: "{{ artifactory_url }}/artifactory/{{ artifactory_repo }}/{{ artifact_file }}"
+        dest: /tmp/frontend.tar.gz
+        force: yes
+      when: artifactory_url is defined
+      
+    - name: Copy artifact from local (alternative)
+      copy:
+        src: "{{ lookup('env', 'ARTIFACT_PATH') }}"
+        dest: /tmp/frontend.tar.gz
+      when: lookup('env', 'ARTIFACT_PATH') | length > 0
+    
+    - name: Extract frontend build
+      unarchive:
+        src: /tmp/frontend.tar.gz
+        dest: "{{ frontend_deploy_dir }}"
+        remote_src: yes
+        owner: www-data
+        group: www-data
+        
+    - name: Configure nginx
+      template:
+        src: ../templates/nginx-site.conf.j2
+        dest: /etc/nginx/sites-available/provedcode
+        mode: '0644'
+      notify: reload nginx
+      
+    - name: Enable nginx site
+      file:
+        src: /etc/nginx/sites-available/provedcode
+        dest: /etc/nginx/sites-enabled/provedcode
+        state: link
+      notify: reload nginx
+      
+    - name: Remove default nginx site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      notify: reload nginx
+    
+    - name: Start nginx
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
+        
+    - name: Wait for nginx to be ready
+      wait_for:
+        port: 80
+        delay: 2
+        timeout: 30
+        
+    - name: Check frontend is accessible
+      uri:
+        url: "http://localhost"
+        status_code: 200
+      retries: 3
+      delay: 5
+      
+  handlers:
+    - name: reload nginx
+      systemd:
+        name: nginx
+        state: reloaded

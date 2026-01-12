@@ -1,0 +1,22 @@
+[Unit]
+Description=ProvedCode Backend Service
+After=network.target
+
+[Service]
+Type=simple
+User={{ ansible_user }}
+Group={{ ansible_user }}
+WorkingDirectory={{ backend_deploy_dir }}
+
+Environment="JAVA_OPTS={{ java_opts }}"
+
+ExecStart=/usr/bin/java ${JAVA_OPTS} -jar {{ backend_deploy_dir }}/application.jar --spring.config.location={{ backend_deploy_dir }}/application.properties
+
+SuccessExitStatus=143
+StandardOutput=journal
+StandardError=journal
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

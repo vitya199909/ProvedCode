@@ -1,0 +1,23 @@
+---
+# Global variables
+project_name: provedcode
+environment: production
+
+# Application versions (will be set by Jenkins)
+backend_version: "{{ lookup('env', 'BACKEND_VERSION') | default('latest', true) }}"
+frontend_version: "{{ lookup('env', 'FRONTEND_VERSION') | default('latest', true) }}"
+
+# Artifactory settings
+artifactory_url: "{{ lookup('env', 'ARTIFACTORY_URL') | default('http://localhost:8082', true) }}"
+artifactory_repo: provedcode-releases
+
+# Deployment paths
+backend_deploy_dir: /opt/provedcode/backend
+frontend_deploy_dir: /var/www/html
+
+# Java settings
+java_opts: "-Xmx512m -Xms256m"
+
+# Nginx settings
+nginx_worker_processes: auto
+nginx_worker_connections: 1024

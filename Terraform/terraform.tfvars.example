@@ -1,0 +1,15 @@
+gcp_project_id = "your-gcp-project-id"
+gcp_region     = "europe-west1"
+gcp_zone       = "europe-west1-b"
+
+project_name = "provedcode"
+environment  = "dev"
+
+machine_type = "e2-medium"
+
+postgres_db = "provedcode"
+postgres_user     = "provedcode"
+postgres_password = "CHANGE_ME"
+
+# Обмежте доступ до ваших IP
+allowed_ip_ranges = ["0.0.0.0/0"]

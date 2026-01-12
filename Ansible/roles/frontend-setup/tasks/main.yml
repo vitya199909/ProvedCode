@@ -1,0 +1,15 @@
+---
+- name: Create frontend deploy directory
+  file:
+    path: "{{ frontend_deploy_dir }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+- name: Install Node.js and npm (for build if needed)
+  apt:
+    name:
+      - nodejs
+      - npm
+    state: present

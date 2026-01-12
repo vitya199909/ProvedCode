@@ -1,0 +1,28 @@
+all:
+  children:
+    gcp:
+      children:
+        backend:
+          hosts:
+            backend-vm:
+              ansible_host: "{{ lookup('env', 'BACKEND_IP') }}"
+              ansible_user: viktor
+              app_port: 8080
+              app_name: provedcode-backend
+              
+        frontend:
+          hosts:
+            frontend-vm:
+              ansible_host: "{{ lookup('env', 'FRONTEND_IP') }}"
+              ansible_user: viktor
+              app_port: 80
+              app_name: provedcode-frontend
+              backend_ip: "{{ lookup('env', 'BACKEND_INTERNAL_IP') }}"
+              
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+        db_host: "{{ lookup('env', 'DB_HOST') }}"
+        db_port: 5432
+        db_name: "{{ lookup('env', 'DB_NAME') | default('provedcode', true) }}"
+        db_user: "{{ lookup('env', 'DB_USER') | default('provedcode', true) }}"
+        db_password: "{{ lookup('env', 'DB_PASSWORD') }}"

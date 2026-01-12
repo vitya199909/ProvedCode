@@ -1,0 +1,28 @@
+---
+- name: Deploy Backend and Frontend
+  hosts: all
+  serial: 1
+  
+  tasks:
+    - name: Display deployment info
+      debug:
+        msg: 
+          - "Deploying to {{ inventory_hostname }}"
+          - "Backend version: {{ backend_version }}"
+          - "Frontend version: {{ frontend_version }}"
+
+- import_playbook: deploy-backend.yml
+- import_playbook: deploy-frontend.yml
+
+- name: Deployment Summary
+  hosts: localhost
+  gather_facts: no
+  
+  tasks:
+    - name: Show deployment results
+      debug:
+        msg:
+          - "=== Deployment Completed ==="
+          - "Backend: {{ groups['backend'][0] }}"
+          - "Frontend: {{ groups['frontend'][0] }}"
+          - "Check frontend: http://{{ hostvars[groups['frontend'][0]]['ansible_host'] }}"

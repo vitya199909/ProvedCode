@@ -1,0 +1,78 @@
+---
+- name: Deploy Backend Application
+  hosts: backend
+  become: yes
+  
+  vars:
+    artifact_file: "provedcode-backend-{{ backend_version }}.jar"
+    
+  tasks:
+    - name: Ensure deploy directory exists
+      file:
+        path: "{{ backend_deploy_dir }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+    
+    - name: Stop backend service if running
+      systemd:
+        name: provedcode-backend
+        state: stopped
+      ignore_errors: yes
+    
+    - name: Download artifact from Artifactory
+      get_url:
+        url: "{{ artifactory_url }}/artifactory/{{ artifactory_repo }}/{{ artifact_file }}"
+        dest: "{{ backend_deploy_dir }}/application.jar"
+        force: yes
+      when: artifactory_url is defined
+      
+    - name: Copy artifact from local (alternative)
+      copy:
+        src: "{{ lookup('env', 'ARTIFACT_PATH') }}"
+        dest: "{{ backend_deploy_dir }}/application.jar"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0644'
+      when: lookup('env', 'ARTIFACT_PATH') | length > 0
+    
+    - name: Create application.properties
+      template:
+        src: ../templates/application.properties.j2
+        dest: "{{ backend_deploy_dir }}/application.properties"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0600'
+    
+    - name: Create systemd service file
+      template:
+        src: ../templates/backend.service.j2
+        dest: /etc/systemd/system/provedcode-backend.service
+        mode: '0644'
+      notify: reload systemd
+    
+    - name: Start and enable backend service
+      systemd:
+        name: provedcode-backend
+        state: started
+        enabled: yes
+        daemon_reload: yes
+    
+    - name: Wait for backend to be ready
+      wait_for:
+        port: "{{ app_port }}"
+        delay: 5
+        timeout: 60
+        
+    - name: Check backend health
+      uri:
+        url: "http://localhost:{{ app_port }}/actuator/health"
+        status_code: 200
+      retries: 5
+      delay: 10
+      
+  handlers:
+    - name: reload systemd
+      systemd:
+        daemon_reload: yes
